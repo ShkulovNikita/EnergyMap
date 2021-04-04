@@ -17,15 +17,19 @@ namespace EnergyMap.Controllers
             string regionRuNames = Server.MapPath("~/DataFiles/ruRegions.data");
             string ruMapPath = Server.MapPath("~/Map/geo_ru.json");
             string databasePath = Server.MapPath("~/Database/Database.csv");
+            string xlsPath = Server.MapPath("~/DataFiles/Карта энергетики_02Апр2021.xlsx");
 
             //получение английских имен регионов из исходного GeoJSON
-            FilesHandler.GetEngRegions(mapPath, regionEngNames);
+            //FilesHandler.GetEngRegions(mapPath, regionEngNames);
 
             //преобразовать англоязычные имена в русские
-            FilesHandler.TranslateRegNames(regionRuNames, mapPath, ruMapPath);
+            //FilesHandler.TranslateRegNames(regionRuNames, mapPath, ruMapPath);
 
             //наполнить файл данных названиями регионов
-            Parser.AddCountries(regionRuNames, databasePath);
+            Parser.AddRegions(regionRuNames, databasePath);
+
+            //парсинг Excel-файла с данными
+            Parser.ParseProductionVolume(xlsPath, databasePath);
 
             //создать data.js на основе GeoSJON
             Parser.CreateGEOData(ruMapPath, dataJSPath);

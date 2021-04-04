@@ -84,3 +84,15 @@ D:\Hackathon\EnergyMap\EnergyMap\EnergyMap\EnergyMap\obj\Debug\EnergyMap.csproj.
 D:\Hackathon\EnergyMap\EnergyMap\EnergyMap\EnergyMap\obj\Debug\EnergyMap.csproj.CopyComplete
 D:\Hackathon\EnergyMap\EnergyMap\EnergyMap\EnergyMap\obj\Debug\EnergyMap.dll
 D:\Hackathon\EnergyMap\EnergyMap\EnergyMap\EnergyMap\obj\Debug\EnergyMap.pdb
+D:\Hackathon\EnergyMap\EnergyMap\EnergyMap\EnergyMap\bin\BouncyCastle.Crypto.dll
+D:\Hackathon\EnergyMap\EnergyMap\EnergyMap\EnergyMap\bin\ICSharpCode.SharpZipLib.dll
+D:\Hackathon\EnergyMap\EnergyMap\EnergyMap\EnergyMap\bin\NPOI.dll
+D:\Hackathon\EnergyMap\EnergyMap\EnergyMap\EnergyMap\bin\NPOI.OOXML.dll
+D:\Hackathon\EnergyMap\EnergyMap\EnergyMap\EnergyMap\bin\NPOI.OpenXml4Net.dll
+D:\Hackathon\EnergyMap\EnergyMap\EnergyMap\EnergyMap\bin\NPOI.OpenXmlFormats.dll
+D:\Hackathon\EnergyMap\EnergyMap\EnergyMap\EnergyMap\bin\BouncyCastle.Crypto.xml
+D:\Hackathon\EnergyMap\EnergyMap\EnergyMap\EnergyMap\bin\ICSharpCode.SharpZipLib.pdb
+D:\Hackathon\EnergyMap\EnergyMap\EnergyMap\EnergyMap\bin\ICSharpCode.SharpZipLib.xml
+D:\Hackathon\EnergyMap\EnergyMap\EnergyMap\EnergyMap\bin\NPOI.xml
+D:\Hackathon\EnergyMap\EnergyMap\EnergyMap\EnergyMap\bin\NPOI.OOXML.xml
+D:\Hackathon\EnergyMap\EnergyMap\EnergyMap\EnergyMap\bin\NPOI.OpenXml4Net.xml
