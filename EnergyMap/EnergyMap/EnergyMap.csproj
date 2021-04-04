@@ -144,6 +144,7 @@
     <Content Include="DataFiles\engRegions.data" />
     <Content Include="DataFiles\ruRegions.data" />
     <Content Include="Map\geo_ru.json" />
+    <Content Include="Database\Database.csv" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\data.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
@@ -172,7 +173,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Database\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>

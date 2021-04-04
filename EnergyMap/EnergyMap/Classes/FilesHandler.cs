@@ -40,7 +40,7 @@ namespace EnergyMap.Classes
             //запись списка регионов в файл
             try
             {
-                using (StreamWriter sw = new StreamWriter(savePath, false, System.Text.Encoding.Default))
+                using (StreamWriter sw = new StreamWriter(savePath, false, System.Text.Encoding.UTF8))
                 {
                     for (int i = 0; i < regions.Count; i++)
                         sw.WriteLine(regions[i]);
@@ -52,14 +52,13 @@ namespace EnergyMap.Classes
             }
         }
 
-        //заменить англоязычные названия на русскоязычные
-        static public void TranslateRegNames(string engPath, string mapPath, string newMapPath)
+        //получить названия регионов на русском
+        static public List<string> GetRuRegionNames(string path)
         {
-            //считывание данных из файла названий регионов
             List<string> names = new List<string>();
             try
             {
-                using (StreamReader sr = new StreamReader(engPath))
+                using (StreamReader sr = new StreamReader(path))
                 {
                     string line;
                     while ((line = sr.ReadLine()) != null)
@@ -73,6 +72,15 @@ namespace EnergyMap.Classes
             {
                 string exception = ex.ToString();
             }
+
+            return names;
+        }
+
+        //заменить англоязычные названия на русскоязычные
+        static public void TranslateRegNames(string engPath, string mapPath, string newMapPath)
+        {
+            //считывание данных из файла названий регионов
+            List<string> names = GetRuRegionNames(engPath);
 
             //исходный текст файла
             string currentText = "";
@@ -157,7 +165,7 @@ namespace EnergyMap.Classes
             //запись файла с переведенными названиями регионов
             try
             {
-                using (StreamWriter sw = new StreamWriter(newMapPath, false, System.Text.Encoding.Default))
+                using (StreamWriter sw = new StreamWriter(newMapPath, false, System.Text.Encoding.UTF8))
                 {
                     sw.WriteLine(geoData);
                 }
