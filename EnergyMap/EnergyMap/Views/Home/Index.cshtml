@@ -69,13 +69,16 @@
                                     for ([key, value] of Object.entries(
                                         bounds.features[0].properties
                                     )) {
-                                        //логика обработки показателей
-                                        //TODO
+                                        if (key == "production_volume") {
+                                            var russianKey;
+                                            russianKey = "Объем выработки";
+                                            indicators.push(russianKey);
+                                        }
                                     }
-                                    //получить список регионов
-                                    //TODO
                                     //Добавляем значения в списки страны и показателей
-                                    //TODO
+                                    indicators.forEach(function (item, i, arr) {
+                                        $("#indicators").append(`<option>${item}</option>`);
+                                    });
                                 </script>
                             </div>
                         </div>

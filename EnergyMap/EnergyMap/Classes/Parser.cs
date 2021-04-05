@@ -9,8 +9,6 @@ namespace EnergyMap.Classes
 {
     static public class Parser
     {
-        
-
         //получить данные по объему выработки
         static private Dictionary<string, double> GetProdVolume(XSSFWorkbook book)
         {
@@ -189,6 +187,5 @@ namespace EnergyMap.Classes
 
             return result;
         }
-
     }
 }
