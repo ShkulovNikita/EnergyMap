@@ -40,7 +40,7 @@ namespace EnergyMap.Classes
             //запись списка регионов в файл
             try
             {
-                using (StreamWriter sw = new StreamWriter(savePath, false, System.Text.Encoding.UTF8))
+                using (StreamWriter sw = new StreamWriter(savePath, false, System.Text.Encoding.Default))
                 {
                     for (int i = 0; i < regions.Count; i++)
                         sw.WriteLine(regions[i]);
@@ -76,6 +76,43 @@ namespace EnergyMap.Classes
             return names;
         }
 
+        //прочитать GeoJSON файл
+        static public string ReadGeoJSON(string mapPath)
+        {
+            string result;
+
+            try
+            {
+                using (StreamReader sr = new StreamReader(mapPath, System.Text.Encoding.GetEncoding(1251)))
+                {
+                    result = sr.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+                string exception = ex.ToString();
+                result = null;
+            }
+
+            return result;
+        }
+
+        //записать текст в GeoJSON файл
+        static public void WriteToGeoJSON(string mapPath, string text)
+        {
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(mapPath, false, System.Text.Encoding.Default))
+                {
+                    sw.WriteLine(text);
+                }
+            }
+            catch (Exception ex)
+            {
+                string exception = ex.ToString();
+            }
+        }
+
         //заменить англоязычные названия на русскоязычные
         static public void TranslateRegNames(string engPath, string mapPath, string newMapPath)
         {
@@ -83,23 +120,10 @@ namespace EnergyMap.Classes
             List<string> names = GetRuRegionNames(engPath);
 
             //исходный текст файла
-            string currentText = "";
+            string currentText = ReadGeoJSON(mapPath);
 
             //текст файла с переведенными названиями
             string geoData = "";
-
-            //считывание GeoJSON файла
-            try
-            {
-                using (StreamReader sr = new StreamReader(mapPath))
-                {
-                    currentText = sr.ReadToEnd();
-                }
-            }
-            catch (Exception ex)
-            {
-                string exception = ex.ToString();
-            }
 
             //обработка исходного файла
             try
@@ -163,17 +187,7 @@ namespace EnergyMap.Classes
             }
 
             //запись файла с переведенными названиями регионов
-            try
-            {
-                using (StreamWriter sw = new StreamWriter(newMapPath, false, System.Text.Encoding.UTF8))
-                {
-                    sw.WriteLine(geoData);
-                }
-            }
-            catch (Exception ex)
-            {
-                string exception = ex.ToString();
-            }
+            WriteToGeoJSON(newMapPath, geoData);
         }
     }
 }
