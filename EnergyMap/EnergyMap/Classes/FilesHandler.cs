@@ -187,5 +187,124 @@ namespace EnergyMap.Classes
             //запись файла с переведенными названиями регионов
             WriteToGeoJSON(newMapPath, geoData);
         }
+
+        //создание файла js с данными GeoJSON
+        static public void CreateGEOData(string mapPath, string dataPath)
+        {
+            string text = "var bounds = ";
+
+            //прочитать GeoJSON
+            try
+            {
+                using (StreamReader sr = new StreamReader(mapPath, Encoding.GetEncoding(1251)))
+                {
+                    text = text + sr.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+                string exception = ex.ToString();
+            }
+
+            //сохранить файл
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(dataPath, false, Encoding.UTF8))
+                {
+                    sw.WriteLine(text);
+                }
+            }
+            catch (Exception ex)
+            {
+                string exception = ex.ToString();
+            }
+        }
+
+        //редактировать GeoJSON
+        static public void EditMapJSON(string databasePath, string mapPath)
+        {
+            List<RegionData> data = Parser.GetRegionData(databasePath);
+
+            //текущий текст JSON'а
+            string currentText = FilesHandler.ReadGeoJSON(mapPath);
+            //обновленный текст JSON'а
+            string newText = "";
+
+            try
+            {
+                //разбивка по строкам
+                string[] text = currentText.Split('\n');
+
+                int counter = 0;
+                for (int i = 0; i < text.Length; i++)
+                {
+                    //строка с данными о регионе
+                    if ((i > 2) && (i < text.Length - 3))
+                    {
+                        //найти запятую, после которой можно вставить новый показатель
+                        int location = text[i].IndexOf("\"ID_0\": 186,") + ("\"ID_0\": 186,").Length;
+
+                        //такое место найдено
+                        if (location - ("\"ID_0\": 186,").Length > 0)
+                        {
+                            //значения показателей
+                            string prodVolume = "";
+
+                            //если этот показатель не был записан ранее
+                            if (!text[i].Contains("production_volume"))
+                            {
+                                if (data[counter].ProdVolume != -1)
+                                    prodVolume = " \"production_volume\": " + data[counter].ProdVolume.ToString().Replace(',', '.') + ",";
+                                else
+                                    prodVolume = " \"production_volume\": " + "null" + ",";
+
+                                text[i] = text[i].Insert(location, prodVolume);
+
+                                counter++;
+                                newText = newText + text[i] + "\n";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        newText = newText + text[i] + "\n";
+                    }
+                }
+                newText = newText + "]\n";
+                newText = newText + "}\n";
+
+            }
+            catch (Exception ex)
+            {
+                string exception = ex.ToString();
+                newText = null;
+            }
+
+
+            //записать новый текст файла GeoJSON
+            FilesHandler.WriteToGeoJSON(mapPath, newText);
+        }
+
+        //добавить названия регионов в файл данных CSV
+        static public void AddRegions(string ruNamesPath, string databasePath)
+        {
+            //список добавляемых названий регионов
+            List<string> regionNames = GetRuRegionNames(ruNamesPath);
+
+            //добавить названия регионов в CSV-базу
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(databasePath, false, System.Text.Encoding.Default))
+                {
+                    sw.WriteLine("region;");
+                    for (int i = 0; i < regionNames.Count; i++)
+                        sw.WriteLine(regionNames[i] + ";");
+                }
+            }
+            catch (Exception ex)
+            {
+                string exception = ex.ToString();
+            }
+        }
     }
 }

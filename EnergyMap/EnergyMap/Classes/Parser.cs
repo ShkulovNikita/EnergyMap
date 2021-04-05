@@ -2,86 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using NPOI.XSSF.UserModel;
 using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 
 namespace EnergyMap.Classes
 {
     static public class Parser
     {
-        //создание файла js с данными GeoJSON
-        static public void CreateGEOData(string mapPath, string dataPath)
-        {
-            string text = "var bounds = ";
-
-            //прочитать GeoJSON
-            try
-            {
-                using (StreamReader sr = new StreamReader(mapPath))
-                {
-                    text = text + sr.ReadToEnd();
-                }
-            }
-            catch (Exception ex)
-            {
-                string exception = ex.ToString();
-            }
-
-            //сохранить файл
-            try
-            {
-                using (StreamWriter sw = new StreamWriter(dataPath, false, System.Text.Encoding.Default))
-                {
-                    sw.WriteLine(text);
-                }
-            }
-            catch (Exception ex)
-            {
-                string exception = ex.ToString();
-            }
-        }
-
-        //добавить названия регионов в файл данных CSV
-        static public void AddRegions(string ruNamesPath, string databasePath)
-        {
-            //список добавляемых названий регионов
-            List<string> regionNames = FilesHandler.GetRuRegionNames(ruNamesPath);
-
-            //добавить названия регионов в CSV-базу
-            try
-            {
-                using (StreamWriter sw = new StreamWriter(databasePath, false, System.Text.Encoding.Default))
-                {
-                    sw.WriteLine("region;");
-                    for (int i = 0; i < regionNames.Count(); i++)
-                        sw.WriteLine(regionNames[i] + ";");
-                }
-            }
-            catch (Exception ex)
-            {
-                string exception = ex.ToString();
-            }
-        }
-
-        //открыть файл данных Excel
-        static private XSSFWorkbook OpenExcelBook(string path)
-        {
-            XSSFWorkbook book;
-
-            try
-            {
-                FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-
-                book = new XSSFWorkbook(fs);
-            }
-            catch (Exception ex)
-            {
-                string exception = ex.ToString();
-                book = null;
-            }
-
-            return book;
-        }
+        
 
         //получить данные по объему выработки
         static private Dictionary<string, double> GetProdVolume(XSSFWorkbook book)
@@ -135,6 +63,26 @@ namespace EnergyMap.Classes
             WriteRegionData(regionData, databasePath);
         }
 
+        //открыть файл данных Excel
+        static private XSSFWorkbook OpenExcelBook(string path)
+        {
+            XSSFWorkbook book;
+
+            try
+            {
+                FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+                book = new XSSFWorkbook(fs);
+            }
+            catch (Exception ex)
+            {
+                string exception = ex.ToString();
+                book = null;
+            }
+
+            return book;
+        }
+
         //обновить данные по объему выработки
         static private List<RegionData> AddProdVolume(Dictionary<string, double> newInfo, List<RegionData> regionData)
         {
@@ -152,7 +100,7 @@ namespace EnergyMap.Classes
         }
 
         //получить информацию о регионах из database.csv
-        static private List<RegionData> GetRegionData(string databasePath)
+        static public List<RegionData> GetRegionData(string databasePath)
         {
             List<RegionData> data = new List<RegionData>();
 
@@ -228,71 +176,6 @@ namespace EnergyMap.Classes
             dataStr = dataStr + CheckValue(data.ProdVolume);
 
             return dataStr;
-        }
-
-        //редактировать GeoJSON
-        static public void EditMapJSON(string databasePath, string mapPath)
-        {
-            List<RegionData> data = GetRegionData(databasePath);
-
-            //текущий текст JSON'а
-            string currentText = FilesHandler.ReadGeoJSON(mapPath);
-            //обновленный текст JSON'а
-            string newText = "";
-
-            try
-            {
-                //разбивка по строкам
-                string[] text = currentText.Split('\n');
-
-                int counter = 0;
-                for (int i = 0; i < text.Length; i++)
-                {
-                    //строка с данными о регионе
-                    if ((i > 2)&&(i < text.Length - 3))
-                    {
-                        //найти запятую, после которой можно вставить новый показатель
-                        int location = text[i].IndexOf("\"ID_0\": 186,") + ("\"ID_0\": 186,").Length;
-
-                        //такое место найдено
-                        if (location - ("\"ID_0\": 186,").Length > 0)
-                        {
-                            //значения показателей
-                            string prodVolume = "";
-
-                            //если этот показатель не был записан ранее
-                            if (!text[i].Contains("production_volume"))
-                            {
-                                if (data[counter].ProdVolume != -1)
-                                    prodVolume = " \"production_volume\": " + data[counter].ProdVolume.ToString().Replace(',', '.') + ",";
-                                else
-                                    prodVolume = " \"production_volume\": " + "null" + ",";
-
-                                text[i] = text[i].Insert(location, prodVolume);
-
-                                counter++;
-                                newText = newText + text[i] + "\n";
-                            }
-                        }
-                    }
-                    else
-                    {
-                        newText = newText + text[i] + "\n";
-                    }
-                }
-                newText = newText + "]\n";
-                newText = newText + "}\n";
-
-            }
-            catch (Exception ex)
-            {
-                string exception = ex.ToString();
-                newText = null;
-            }
-
-
-            //записать новый текст файла GeoJSON
-            FilesHandler.WriteToGeoJSON(mapPath, newText);
         }
 
         static private string CheckValue(double value)

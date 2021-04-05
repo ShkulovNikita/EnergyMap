@@ -23,16 +23,16 @@ namespace EnergyMap.Controllers
             FilesHandler.TranslateRegNames(regionRuNames, mapPath, ruMapPath);
 
             //наполнить файл данных названиями регионов
-            Parser.AddRegions(regionRuNames, databasePath);
+            FilesHandler.AddRegions(regionRuNames, databasePath);
 
             //парсинг Excel-файла с данными
             Parser.ParseProductionVolume(xlsPath, databasePath);
 
             //внести показатели в файл GeoJSON
-            Parser.EditMapJSON(databasePath, ruMapPath);
+            FilesHandler.EditMapJSON(databasePath, ruMapPath);
 
             //создать data.js на основе GeoSJON
-            Parser.CreateGEOData(ruMapPath, dataJSPath);
+            FilesHandler.CreateGEOData(ruMapPath, dataJSPath);
 
             return View();
         }
