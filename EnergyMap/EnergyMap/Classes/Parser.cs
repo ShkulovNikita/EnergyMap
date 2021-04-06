@@ -42,6 +42,69 @@ namespace EnergyMap.Classes
             return data;
         }
 
+        //получить данные по себестоимости выработки
+        static private Dictionary<string, double> GetProdPrice(XSSFWorkbook book)
+        {
+            Dictionary<string, double> data = new Dictionary<string, double>();
+            try
+            {
+                var sheet = book.GetSheet("Выработка_области");
+
+                int rowCount = sheet.LastRowNum;
+                for (int i = 1; i < rowCount; i++)
+                {
+                    //получение очередной строки из таблицы
+                    IRow currentRow = sheet.GetRow(i);
+                    if (currentRow.GetCell(1).StringCellValue.Trim() != "Россия")
+                    {
+                        var cellRegion = currentRow.GetCell(1).StringCellValue.Trim();
+                        var volumeValue = currentRow.GetCell(5).NumericCellValue;
+                        data.Add(cellRegion, volumeValue);
+                    }
+                    else break;
+                }
+            }
+            catch (Exception ex)
+            {
+                string exception = ex.ToString();
+                data = null;
+            }
+
+            return data;
+        }
+
+        //получить данные по объему потребления
+        static private Dictionary<string, double> GetConsVolume(XSSFWorkbook book)
+        {
+            Dictionary<string, double> data = new Dictionary<string, double>();
+
+            try
+            {
+                var sheet = book.GetSheet("Потребление_области");
+
+                int rowCount = sheet.LastRowNum;
+                for (int i = 1; i < rowCount; i++)
+                {
+                    //получение очередной строки из таблицы
+                    IRow currentRow = sheet.GetRow(i);
+                    if (currentRow.GetCell(1).StringCellValue.Trim() != "Россия")
+                    {
+                        var cellRegion = currentRow.GetCell(1).StringCellValue.Trim();
+                        var volumeValue = currentRow.GetCell(4).NumericCellValue;
+                        data.Add(cellRegion, volumeValue);
+                    }
+                    else break;
+                }
+            }
+            catch (Exception ex)
+            {
+                string exception = ex.ToString();
+                data = null;
+            }
+
+            return data;
+        }
+
         //парсинг данных по объему выработки регионов
         static public void ParseProductionVolume(string dataPath, string databasePath)
         {
@@ -56,6 +119,44 @@ namespace EnergyMap.Classes
 
             //обновить данные по объему выработки
             regionData = AddProdVolume(data, regionData);
+
+            //записать в CSV-файл данных
+            WriteRegionData(regionData, databasePath);
+        }
+
+        //парсинг данных по себестоимости выработки регионов
+        static public void ParseProductionPrice(string dataPath, string databasePath)
+        {
+            //открыть Excel файл на чтение
+            XSSFWorkbook book = OpenExcelBook(dataPath);
+
+            //получить значения себестоимости выработки
+            Dictionary<string, double> data = GetProdPrice(book);
+
+            //получить список регионов с их данными
+            List<RegionData> regionData = GetRegionData(databasePath);
+
+            //обновить данные по себестоимости выработки
+            regionData = AddProdPrice(data, regionData);
+
+            //записать в CSV-файл данных
+            WriteRegionData(regionData, databasePath);
+        }
+
+        //парсинг данных по объему потребления регионов
+        static public void ParseConsumptionVolume(string dataPath, string databasePath)
+        {
+            //открыть Excel файл на чтение
+            XSSFWorkbook book = OpenExcelBook(dataPath);
+
+            //получить значения объема потребления
+            Dictionary<string, double> data = GetConsVolume(book);
+
+            //получить список регионов с их данными
+            List<RegionData> regionData = GetRegionData(databasePath);
+
+            //обновить данные по объему потребления
+            regionData = AddConsVolume(data, regionData);
 
             //записать в CSV-файл данных
             WriteRegionData(regionData, databasePath);
@@ -97,6 +198,39 @@ namespace EnergyMap.Classes
             return regionData;
         }
 
+        //обновить данные по себестоимости выработки
+        static private List<RegionData> AddProdPrice(Dictionary<string, double> newInfo, List<RegionData> regionData)
+        {
+            //перебор регионов из списка
+            for (int i = 0; i < regionData.Count(); i++)
+            {
+                //если текущий регион упоминается в словаре, то информация переносится
+                if (newInfo.ContainsKey(regionData[i].Name))
+                {
+                    regionData[i].ProdPrice = newInfo[regionData[i].Name];
+                }
+            }
+
+            return regionData;
+        }
+
+        //обновить данные по объему потребления
+        static private List<RegionData> AddConsVolume(Dictionary<string, double> newInfo, List<RegionData> regionData)
+        {
+            //перебор регионов из списка
+            for (int i = 0; i < regionData.Count(); i++)
+            {
+                //если текущий регион упоминается в словаре, то информация переносится
+                if (newInfo.ContainsKey(regionData[i].Name))
+                {
+                    regionData[i].ConsVolume = newInfo[regionData[i].Name];
+                }
+            }
+
+            return regionData;
+        }
+
+        //!
         //получить информацию о регионах из database.csv
         static public List<RegionData> GetRegionData(string databasePath)
         {
@@ -129,6 +263,18 @@ namespace EnergyMap.Classes
                             else
                                 regionData.ProdVolume = -1;
 
+                            //себестоимость выработки
+                            if ((dataParts[2] != "NULL") && (dataParts[2] != ""))
+                                regionData.ProdPrice = Convert.ToDouble(dataParts[2].Replace('.', ','));
+                            else
+                                regionData.ProdPrice = -1;
+
+                            //объем потребления
+                            if ((dataParts[3] != "NULL") && (dataParts[3] != ""))
+                                regionData.ConsVolume = Convert.ToDouble(dataParts[3].Replace('.', ','));
+                            else
+                                regionData.ConsVolume = -1;
+
                             data.Add(regionData);
                         }
                     }
@@ -143,6 +289,7 @@ namespace EnergyMap.Classes
             return data;
         }
     
+        //!
         //записать данные в CSV-файл
         static private void WriteRegionData(List<RegionData> data, string databasePath)
         {
@@ -150,7 +297,7 @@ namespace EnergyMap.Classes
             {
                 using(StreamWriter sw = new StreamWriter(databasePath, false, System.Text.Encoding.Default))
                 {
-                    sw.WriteLine("region;production_volume;");
+                    sw.WriteLine("region;production_volume;production_price;consumption_volume;");
                     for (int i = 0; i < data.Count(); i++)
                     {
                         string dataStr = GetStringForDatabase(data[i]);
@@ -164,6 +311,7 @@ namespace EnergyMap.Classes
             }
         }
 
+        //!
         //строка с данными одного региона
         static private string GetStringForDatabase(RegionData data)
         {
@@ -172,6 +320,12 @@ namespace EnergyMap.Classes
 
             //объем выработки
             dataStr = dataStr + CheckValue(data.ProdVolume);
+
+            //себестоимость выработки
+            dataStr = dataStr + CheckValue(data.ProdPrice);
+
+            //объем потребления
+            dataStr = dataStr + CheckValue(data.ConsVolume);
 
             return dataStr;
         }

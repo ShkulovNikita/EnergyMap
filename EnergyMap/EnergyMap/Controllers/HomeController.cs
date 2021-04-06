@@ -34,6 +34,8 @@ namespace EnergyMap.Controllers
 
             //парсинг Excel-файла с данными
             Parser.ParseProductionVolume(xlsPath, databasePath);
+            Parser.ParseProductionPrice(xlsPath, databasePath);
+            Parser.ParseConsumptionVolume(xlsPath, databasePath);
 
             //внести показатели в файл GeoJSON
             FilesHandler.EditMapJSON(databasePath, ruMapPath);

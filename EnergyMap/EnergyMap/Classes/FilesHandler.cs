@@ -243,13 +243,14 @@ namespace EnergyMap.Classes
             }
         }
 
+        //!
         //редактировать GeoJSON
         static public void EditMapJSON(string databasePath, string mapPath)
         {
             List<RegionData> data = Parser.GetRegionData(databasePath);
 
             //текущий текст JSON'а
-            string currentText = FilesHandler.ReadGeoJSON(mapPath);
+            string currentText = ReadGeoJSON(mapPath);
             //обновленный текст JSON'а
             string newText = "";
 
@@ -272,6 +273,8 @@ namespace EnergyMap.Classes
                         {
                             //значения показателей
                             string prodVolume = "";
+                            string prodPrice = "";
+                            string consVolume = "";
 
                             //если этот показатель не был записан ранее
                             if (!text[i].Contains("production_volume"))
@@ -280,12 +283,28 @@ namespace EnergyMap.Classes
                                     prodVolume = " \"production_volume\": " + data[counter].ProdVolume.ToString().Replace(',', '.') + ",";
                                 else
                                     prodVolume = " \"production_volume\": " + "null" + ",";
-
-                                text[i] = text[i].Insert(location, prodVolume);
-
-                                counter++;
-                                newText = newText + text[i] + "\n";
                             }
+
+                            if (!text[i].Contains("production_price"))
+                            {
+                                if (data[counter].ProdPrice != -1)
+                                    prodPrice = " \"production_price\": " + data[counter].ProdPrice.ToString().Replace(',', '.') + ",";
+                                else
+                                    prodPrice = " \"production_price\": " + "null" + ",";
+                            }
+
+                            if (!text[i].Contains("consumption_volume"))
+                            {
+                                if (data[counter].ConsVolume != -1)
+                                    consVolume = " \"consumption_volume\": " + data[counter].ConsVolume.ToString().Replace(',', '.') + ",";
+                                else
+                                    consVolume = " \"consumption_volume\": " + "null" + ",";
+                            }
+
+                            text[i] = text[i].Insert(location, prodVolume + prodPrice + consVolume);
+
+                            counter++;
+                            newText = newText + text[i] + "\n";
                         }
                     }
                     else
@@ -303,11 +322,11 @@ namespace EnergyMap.Classes
                 newText = null;
             }
 
-
             //записать новый текст файла GeoJSON
-            FilesHandler.WriteToGeoJSON(mapPath, newText);
+            WriteToGeoJSON(mapPath, newText);
         }
 
+        //!
         //добавить названия регионов в файл данных CSV
         static public void AddRegions(string ruNamesPath, string databasePath)
         {
@@ -319,9 +338,9 @@ namespace EnergyMap.Classes
             {
                 using (StreamWriter sw = new StreamWriter(databasePath, false, System.Text.Encoding.Default))
                 {
-                    sw.WriteLine("region;");
+                    sw.WriteLine("region;;;");
                     for (int i = 0; i < regionNames.Count; i++)
-                        sw.WriteLine(regionNames[i] + ";");
+                        sw.WriteLine(regionNames[i] + ";;;");
                 }
             }
             catch (Exception ex)

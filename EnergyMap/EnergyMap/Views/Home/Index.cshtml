@@ -69,9 +69,14 @@
                                     for ([key, value] of Object.entries(
                                         bounds.features[0].properties
                                     )) {
-                                        if (key == "production_volume") {
+                                        if ((key == "production_volume")||(key == "production_price")||(key == "consumption_volume")) {
                                             var russianKey; 
-                                            russianKey = "Объем выработки";
+                                            if (key == "production_volume")
+                                                russianKey = "Объем выработки";
+                                            else if (key == "production_price")
+                                                russianKey = "Себестоимость выработки";
+                                            else if (key == "consumption_volume")
+                                                russianKey = "Объем потребления";
                                             indicators.push({key: key, value:russianKey });
                                         }
                                     }

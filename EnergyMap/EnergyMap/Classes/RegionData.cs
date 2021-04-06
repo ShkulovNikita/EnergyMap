@@ -9,5 +9,11 @@
 
         //объем выработки
         public double ProdVolume { get; set; }
+
+        //себестоимость выработки
+        public double ProdPrice { get; set; }
+
+        //объем потребления
+        public double ConsVolume { get; set; }
     }
 }
