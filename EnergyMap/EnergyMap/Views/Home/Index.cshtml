@@ -64,20 +64,20 @@
                                     var regions = [];
                                     //массив показателей
                                     var indicators = [];
-                                    indicators.push("Выберите показатель");
+                                    indicators.push({ key: "choose_indicators",  value:"Выберите показатель"});
                                     //получить список показателей
                                     for ([key, value] of Object.entries(
                                         bounds.features[0].properties
                                     )) {
                                         if (key == "production_volume") {
-                                            var russianKey;
+                                            var russianKey; 
                                             russianKey = "Объем выработки";
-                                            indicators.push(russianKey);
+                                            indicators.push({key: key, value:russianKey });
                                         }
                                     }
                                     //Добавляем значения в списки страны и показателей
                                     indicators.forEach(function (item, i, arr) {
-                                        $("#indicators").append(`<option>${item}</option>`);
+                                        $("#indicators").append(`<option value=${item.key}>${item.value}</option>`);
                                     });
                                 </script>
                             </div>
