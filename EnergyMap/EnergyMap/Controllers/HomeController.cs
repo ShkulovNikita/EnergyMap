@@ -8,12 +8,19 @@ namespace EnergyMap.Controllers
     {
         public ActionResult Index()
         {
+            //исходный файл GeoJSON
             string mapPath = Server.MapPath("~/Map/geo.json");
+            //файл GeoJSON, записанный в переменную js
             string dataJSPath = Server.MapPath("~/Scripts/data.js");
+            //англоязычные названия регионов
             string regionEngNames = Server.MapPath("~/DataFiles/engRegions.data");
+            //сопоставление английских и русских названий регионов
             string regionRuNames = Server.MapPath("~/DataFiles/ruRegions.data");
+            //файл GeoJSON с русскими названиями регионов
             string ruMapPath = Server.MapPath("~/Map/geo_ru.json");
+            //CSV-файл данных
             string databasePath = Server.MapPath("~/Database/Database.csv");
+            //экселевский файл с показателями
             string xlsPath = Server.MapPath("~/DataFiles/Карта энергетики_02Апр2021.xlsx");
 
             //получение английских имен регионов из исходного GeoJSON

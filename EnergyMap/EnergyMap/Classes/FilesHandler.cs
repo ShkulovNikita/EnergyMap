@@ -36,6 +36,12 @@ namespace EnergyMap.Classes
             }
 
             //запись списка регионов в файл
+            WriteRegionsToFile(regions, savePath);
+        }
+
+        //записать список регионов в файл
+        static private void WriteRegionsToFile(List<string> regions, string savePath)
+        {
             try
             {
                 using (StreamWriter sw = new StreamWriter(savePath, false, System.Text.Encoding.Default))
@@ -48,6 +54,35 @@ namespace EnergyMap.Classes
             {
                 string exception = ex.ToString();
             }
+        }
+
+        //получить название региона из строки
+        static private string GetRegName(string line)
+        {
+            //найти, где начинается раздел названия региона
+            int location = line.IndexOf("VARNAME_1");
+
+            var regName = new StringBuilder();
+
+            //в этой строке содержится название региона
+            if (location > 0)
+            {
+                location = location + 13;
+
+                //получаем текущий символ
+                char currentSymbol = line[location];
+                while (currentSymbol != '"')
+                {
+                    //добавляем очередную букву названия региона
+                    regName.Append(currentSymbol);
+
+                    //переход к следующей букве
+                    location++;
+                    currentSymbol = line[location];
+                }
+            }
+
+            return regName.ToString();
         }
 
         //получить названия регионов на русском
@@ -121,9 +156,17 @@ namespace EnergyMap.Classes
             string currentText = ReadGeoJSON(mapPath);
 
             //текст файла с переведенными названиями
+            string geoData = GetTranslatedGeoJSON(currentText, names);
+
+            //запись файла с переведенными названиями регионов
+            WriteToGeoJSON(newMapPath, geoData);
+        }
+
+        //получение текста GeoJSON с переведенными названиями регионов
+        static private string GetTranslatedGeoJSON(string currentText, List<string> names)
+        {
             string geoData = "";
 
-            //обработка исходного файла
             try
             {
                 //разбивка по строкам
@@ -134,7 +177,7 @@ namespace EnergyMap.Classes
                 for (int i = 0; i < text.Length; i++)
                 {
                     //перебор строк
-                    if ((i > 2)&&(i < text.Length - 3))
+                    if ((i > 2) && (i < text.Length - 3))
                     {
                         //обработка строки Москвы
                         //отличается от других - использован костыль
@@ -145,28 +188,8 @@ namespace EnergyMap.Classes
                         }
                         else
                         {
-                            //найти, где начинается раздел названия региона
-                            int location = text[i].IndexOf("VARNAME_1");
-
-                            var regName = new StringBuilder();
-
-                            //в этой строке содержится название региона
-                            if (location > 0)
-                            {
-                                location = location + 13;
-
-                                //получаем текущий символ
-                                char currentSymbol = text[i][location];
-                                while (currentSymbol != '"')
-                                {
-                                    //добавляем очередную букву названия региона
-                                    regName.Append(currentSymbol);
-
-                                    //переход к следующей букве
-                                    location++;
-                                    currentSymbol = text[i][location];
-                                }
-                            }
+                            //получение из текущей строки английского названия региона
+                            string regName = GetRegName(text[i]);
 
                             //замена английского названия русским
                             text[i] = text[i].Replace(regName.ToString(), names[counter]);
@@ -182,10 +205,10 @@ namespace EnergyMap.Classes
             catch (Exception ex)
             {
                 string exception = ex.ToString();
+                geoData = null;
             }
 
-            //запись файла с переведенными названиями регионов
-            WriteToGeoJSON(newMapPath, geoData);
+            return geoData;
         }
 
         //создание файла js с данными GeoJSON
