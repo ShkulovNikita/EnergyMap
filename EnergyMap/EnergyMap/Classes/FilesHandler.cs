@@ -44,7 +44,7 @@ namespace EnergyMap.Classes
         {
             try
             {
-                using (StreamWriter sw = new StreamWriter(savePath, false, System.Text.Encoding.Default))
+                using (StreamWriter sw = new StreamWriter(savePath, false, System.Text.Encoding.UTF8))
                 {
                     for (int i = 0; i < regions.Count; i++)
                         sw.WriteLine(regions[i]);
@@ -135,7 +135,7 @@ namespace EnergyMap.Classes
         {
             try
             {
-                using (StreamWriter sw = new StreamWriter(mapPath, false, System.Text.Encoding.Default))
+                using (StreamWriter sw = new StreamWriter(mapPath, false, System.Text.Encoding.UTF8))
                 {
                     sw.WriteLine(text);
                 }
@@ -275,6 +275,7 @@ namespace EnergyMap.Classes
                             string prodVolume = "";
                             string prodPrice = "";
                             string consVolume = "";
+                            string difference = "";
 
                             //если этот показатель не был записан ранее
                             if (!text[i].Contains("production_volume"))
@@ -301,7 +302,13 @@ namespace EnergyMap.Classes
                                     consVolume = " \"consumption_volume\": " + "null" + ",";
                             }
 
-                            text[i] = text[i].Insert(location, prodVolume + prodPrice + consVolume);
+                            if (!text[i].Contains("production_consumption_difference"))
+                                if (data[counter].ProdConsDif != -1)
+                                    difference = " \"production_consumption_difference\": " + data[counter].ProdConsDif.ToString().Replace(',', '.') + ",";
+                                else
+                                    difference = " \"production_consumption_difference\": " + "null" + ",";
+
+                            text[i] = text[i].Insert(location, prodVolume + prodPrice + consVolume + difference);
 
                             counter++;
                             newText = newText + text[i] + "\n";
@@ -336,11 +343,11 @@ namespace EnergyMap.Classes
             //добавить названия регионов в CSV-базу
             try
             {
-                using (StreamWriter sw = new StreamWriter(databasePath, false, System.Text.Encoding.Default))
+                using (StreamWriter sw = new StreamWriter(databasePath, false, System.Text.Encoding.UTF8))
                 {
-                    sw.WriteLine("region;;;");
+                    sw.WriteLine("region;;;;");
                     for (int i = 0; i < regionNames.Count; i++)
-                        sw.WriteLine(regionNames[i] + ";;;");
+                        sw.WriteLine(regionNames[i] + ";;;;");
                 }
             }
             catch (Exception ex)

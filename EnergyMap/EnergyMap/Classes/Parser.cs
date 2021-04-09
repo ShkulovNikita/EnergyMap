@@ -105,6 +105,25 @@ namespace EnergyMap.Classes
             return data;
         }
 
+        //получить данные по разнице потребления и выработки
+        static private Dictionary<string, double> GetDifVolume(List<RegionData> regionData)
+        {
+            Dictionary<string, double> data = new Dictionary<string, double>();
+
+            for (int i = 0; i < regionData.Count(); i++)
+            {
+                if (!data.ContainsKey(regionData[i].Name))
+                {
+                    if ((regionData[i].ProdVolume != -1) && (regionData[i].ConsVolume != -1))
+                        data.Add(regionData[i].Name, regionData[i].ProdVolume - regionData[i].ConsVolume);
+                    else
+                        data.Add(regionData[i].Name, -1);
+                }
+            }
+
+            return data;
+        }
+
         //парсинг данных по объему выработки регионов
         static public void ParseProductionVolume(string dataPath, string databasePath)
         {
@@ -157,6 +176,22 @@ namespace EnergyMap.Classes
 
             //обновить данные по объему потребления
             regionData = AddConsVolume(data, regionData);
+
+            //записать в CSV-файл данных
+            WriteRegionData(regionData, databasePath);
+        }
+
+        //получение данных по разнице выработки и потребления
+        static public void ParseProdConsDifference(string dataPath, string databasePath)
+        {
+            //получить список регионов с их данными
+            List<RegionData> regionData = GetRegionData(databasePath);
+
+            //получить значения разницы потребления и выработки
+            Dictionary<string, double> data = GetDifVolume(regionData);
+
+            //обновить данные по разнице выработки и потребления
+            regionData = AddDifVolume(data, regionData);
 
             //записать в CSV-файл данных
             WriteRegionData(regionData, databasePath);
@@ -230,6 +265,22 @@ namespace EnergyMap.Classes
             return regionData;
         }
 
+        //обновить данные по разнице выработки и потребления
+        static private List<RegionData> AddDifVolume(Dictionary<string, double> newInfo, List<RegionData> regionData)
+        {
+            //перебор регионов из списка
+            for (int i = 0; i < regionData.Count(); i++)
+            {
+                //если текущий регион упоминается в словаре, то информация переносится
+                if (newInfo.ContainsKey(regionData[i].Name))
+                {
+                    regionData[i].ProdConsDif = newInfo[regionData[i].Name];
+                }
+            }
+
+            return regionData;
+        }
+
         //!
         //получить информацию о регионах из database.csv
         static public List<RegionData> GetRegionData(string databasePath)
@@ -275,6 +326,12 @@ namespace EnergyMap.Classes
                             else
                                 regionData.ConsVolume = -1;
 
+                            //разница потребления и выработки
+                            if ((dataParts[4] != "NULL") && (dataParts[4] != ""))
+                                regionData.ProdConsDif = Convert.ToDouble(dataParts[4].Replace('.', ','));
+                            else
+                                regionData.ProdConsDif = -1;
+
                             data.Add(regionData);
                         }
                     }
@@ -295,9 +352,9 @@ namespace EnergyMap.Classes
         {
             try
             {
-                using(StreamWriter sw = new StreamWriter(databasePath, false, System.Text.Encoding.Default))
+                using(StreamWriter sw = new StreamWriter(databasePath, false, System.Text.Encoding.UTF8))
                 {
-                    sw.WriteLine("region;production_volume;production_price;consumption_volume;");
+                    sw.WriteLine("region;production_volume;production_price;consumption_volume;production_consumption_difference;");
                     for (int i = 0; i < data.Count(); i++)
                     {
                         string dataStr = GetStringForDatabase(data[i]);
@@ -326,6 +383,9 @@ namespace EnergyMap.Classes
 
             //объем потребления
             dataStr = dataStr + CheckValue(data.ConsVolume);
+
+            //разница выработки и потребления
+            dataStr = dataStr + CheckValue(data.ProdConsDif);
 
             return dataStr;
         }

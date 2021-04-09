@@ -15,5 +15,8 @@
 
         //объем потребления
         public double ConsVolume { get; set; }
+
+        //разница между выработкой и потреблением
+        public double ProdConsDif { get; set; }
     }
 }
