@@ -183,7 +183,9 @@ namespace EnergyMap.Classes
                         //отличается от других - использован костыль
                         if (i == 42)
                         {
-                            text[i].Replace("\"VARNAME_1\": null, \"TYPE_1\":", "\"VARNAME_1\": \"г. Москва и Московская область\", \"TYPE_1\":");
+                            string curr1 = text[i];
+                            text[i] = text[i].Replace("\"VARNAME_1\": null", "\"VARNAME_1\": \"г. Москва и Московская область\"");
+                            string curr2 = text[i];
                             counter++;
                         }
                         else

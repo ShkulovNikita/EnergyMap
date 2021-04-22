@@ -27,22 +27,22 @@ namespace EnergyMap.Controllers
             //FilesHandler.GetEngRegions(mapPath, regionEngNames);
 
             //преобразовать англоязычные имена в русские
-            FilesHandler.TranslateRegNames(regionRuNames, mapPath, ruMapPath);
+            //FilesHandler.TranslateRegNames(regionRuNames, mapPath, ruMapPath);
 
             //наполнить файл данных названиями регионов
-            FilesHandler.AddRegions(regionRuNames, databasePath);
+            //FilesHandler.AddRegions(regionRuNames, databasePath);
 
             //парсинг Excel-файла с данными
-            Parser.ParseProductionVolume(xlsPath, databasePath);
-            Parser.ParseProductionPrice(xlsPath, databasePath);
-            Parser.ParseConsumptionVolume(xlsPath, databasePath);
-            Parser.ParseProdConsDifference(xlsPath, databasePath);
+            //Parser.ParseProductionVolume(xlsPath, databasePath);
+            //Parser.ParseProductionPrice(xlsPath, databasePath);
+            //Parser.ParseConsumptionVolume(xlsPath, databasePath);
+            //Parser.ParseProdConsDifference(xlsPath, databasePath);
 
             //внести показатели в файл GeoJSON
-            FilesHandler.EditMapJSON(databasePath, ruMapPath);
+            //FilesHandler.EditMapJSON(databasePath, ruMapPath);
 
             //создать data.js на основе GeoSJON
-            FilesHandler.CreateGEOData(ruMapPath, dataJSPath);
+            //FilesHandler.CreateGEOData(ruMapPath, dataJSPath);
 
             return View();
         }

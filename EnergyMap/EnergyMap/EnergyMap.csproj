@@ -166,6 +166,9 @@
     <Content Include="Database\Database.csv" />
     <Content Include="DataFiles\Карта энергетики_02Апр2021.xlsx" />
     <None Include="Properties\PublishProfiles\EnergyMap - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\FTPProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\FTPProfile1.pubxml" />
+    <None Include="Properties\PublishProfiles\FTPProfile2.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\data.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
