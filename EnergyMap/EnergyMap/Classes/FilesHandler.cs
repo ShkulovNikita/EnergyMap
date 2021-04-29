@@ -302,6 +302,12 @@ namespace EnergyMap.Classes
                         //найти запятую, после которой можно вставить новый показатель
                         int location = text[i].IndexOf("\"ID_0\": 186,") + ("\"ID_0\": 186,").Length;
 
+                        //Крым имеет другой идентификатор
+                        if (text[i].Contains("\"ID_0\": 237,"))
+                        {
+                            location = text[i].IndexOf("\"ID_0\": 237,") + ("\"ID_0\": 186,").Length;
+                        }
+
                         //такое место найдено
                         if (location - ("\"ID_0\": 186,").Length > 0)
                         {
@@ -326,7 +332,6 @@ namespace EnergyMap.Classes
                 }
                 newText = newText + "]\n";
                 newText = newText + "}\n";
-
             }
             catch (Exception ex)
             {
