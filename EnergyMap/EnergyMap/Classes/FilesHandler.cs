@@ -283,7 +283,7 @@ namespace EnergyMap.Classes
                             if (!text[i].Contains("production_volume"))
                             {
                                 if (data[counter].ProdVolume != -1)
-                                    prodVolume = " \"production_volume\": " + data[counter].ProdVolume.ToString().Replace(',', '.') + ",";
+                                    prodVolume = " \"production_volume\": " + Math.Round(data[counter].ProdVolume, 2).ToString().Replace(',', '.') + ",";
                                 else
                                     prodVolume = " \"production_volume\": " + "null" + ",";
                             }
@@ -291,7 +291,7 @@ namespace EnergyMap.Classes
                             if (!text[i].Contains("production_price"))
                             {
                                 if (data[counter].ProdPrice != -1)
-                                    prodPrice = " \"production_price\": " + data[counter].ProdPrice.ToString().Replace(',', '.') + ",";
+                                    prodPrice = " \"production_price\": " + Math.Round(data[counter].ProdPrice, 2).ToString().Replace(',', '.') + ",";
                                 else
                                     prodPrice = " \"production_price\": " + "null" + ",";
                             }
@@ -299,14 +299,14 @@ namespace EnergyMap.Classes
                             if (!text[i].Contains("consumption_volume"))
                             {
                                 if (data[counter].ConsVolume != -1)
-                                    consVolume = " \"consumption_volume\": " + data[counter].ConsVolume.ToString().Replace(',', '.') + ",";
+                                    consVolume = " \"consumption_volume\": " + Math.Round(data[counter].ConsVolume, 2).ToString().Replace(',', '.') + ",";
                                 else
                                     consVolume = " \"consumption_volume\": " + "null" + ",";
                             }
 
                             if (!text[i].Contains("production_consumption_difference"))
                                 if (data[counter].ProdConsDif != -1)
-                                    difference = " \"production_consumption_difference\": " + data[counter].ProdConsDif.ToString().Replace(',', '.') + ",";
+                                    difference = " \"production_consumption_difference\": " + Math.Round(data[counter].ProdConsDif, 2).ToString().Replace(',', '.') + ",";
                                 else
                                     difference = " \"production_consumption_difference\": " + "null" + ",";
 

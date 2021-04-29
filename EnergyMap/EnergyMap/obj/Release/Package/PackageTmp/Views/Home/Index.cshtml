@@ -51,6 +51,34 @@
                                             <th>-----</th>
                                             <th>-----</th>
                                         </tr>
+                                        <tr class="top-row">
+                                            <th>n</th>
+                                            <th>-----</th>
+                                            <th>-----</th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <label style="color: rgb(37, 192, 219); font-weight: bold">Близкие показатели</label>
+                                <table class="table" id="closeRegions">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Регион</th>
+                                            <th scope="col">Значение</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="close-row">
+                                            <th>-----</th>
+                                            <th>-----</th>
+                                        </tr>
+                                        <tr class="close-row">
+                                            <th>-----</th>
+                                            <th>-----</th>
+                                        </tr>
+                                        <tr class="close-row">
+                                            <th>-----</th>
+                                            <th>-----</th>
+                                        </tr>
                                     </tbody>
                                 </table>
                                 <div>
@@ -79,7 +107,7 @@
                                             indicators.push({ key: key, value: russianKey });
                                         }
                                     }
-                                    //Добавляем значения в списки страны и показателей
+                                    //Добавляем значения в список показателей
                                     indicators.forEach(function (item, i, arr) {
                                         $("#indicators").append(`<option value=${item.key}>${item.value}</option>`);
                                     });

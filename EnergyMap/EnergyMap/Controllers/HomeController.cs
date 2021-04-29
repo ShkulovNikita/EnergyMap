@@ -6,7 +6,18 @@ namespace EnergyMap.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        //загрузка данных
+        public FileResult GetFile()
+        {
+            string filePath = Server.MapPath("~/Database/database.csv");
+            string fileType = "csv";
+            string fileName = "data.csv";
+            return File(filePath, fileType, fileName);
+        }
+
+        //исполнение набора функций для получения и обработки данных
+        //выполнять при изменении исходного набора данных
+        private void GetData()
         {
             //исходный файл GeoJSON
             string mapPath = Server.MapPath("~/Map/geo.json");
@@ -24,26 +35,30 @@ namespace EnergyMap.Controllers
             string xlsPath = Server.MapPath("~/DataFiles/Карта энергетики_02Апр2021.xlsx");
 
             //получение английских имен регионов из исходного GeoJSON
-            //FilesHandler.GetEngRegions(mapPath, regionEngNames);
+            FilesHandler.GetEngRegions(mapPath, regionEngNames);
 
             //преобразовать англоязычные имена в русские
-            //FilesHandler.TranslateRegNames(regionRuNames, mapPath, ruMapPath);
+            FilesHandler.TranslateRegNames(regionRuNames, mapPath, ruMapPath);
 
             //наполнить файл данных названиями регионов
-            //FilesHandler.AddRegions(regionRuNames, databasePath);
+            FilesHandler.AddRegions(regionRuNames, databasePath);
 
             //парсинг Excel-файла с данными
-            //Parser.ParseProductionVolume(xlsPath, databasePath);
-            //Parser.ParseProductionPrice(xlsPath, databasePath);
-            //Parser.ParseConsumptionVolume(xlsPath, databasePath);
-            //Parser.ParseProdConsDifference(xlsPath, databasePath);
+            Parser.ParseProductionVolume(xlsPath, databasePath);
+            Parser.ParseProductionPrice(xlsPath, databasePath);
+            Parser.ParseConsumptionVolume(xlsPath, databasePath);
+            Parser.ParseProdConsDifference(xlsPath, databasePath);
 
             //внести показатели в файл GeoJSON
-            //FilesHandler.EditMapJSON(databasePath, ruMapPath);
+            FilesHandler.EditMapJSON(databasePath, ruMapPath);
 
             //создать data.js на основе GeoSJON
-            //FilesHandler.CreateGEOData(ruMapPath, dataJSPath);
+            FilesHandler.CreateGEOData(ruMapPath, dataJSPath);
+        }
 
+        public ActionResult Index()
+        {
+            //GetData();
             return View();
         }
     }

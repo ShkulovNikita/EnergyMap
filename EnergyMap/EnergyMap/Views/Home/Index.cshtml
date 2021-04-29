@@ -97,13 +97,13 @@
                                         if ((key == "production_volume") || (key == "production_price") || (key == "consumption_volume") || (key == "production_consumption_difference")) {
                                             var russianKey;
                                             if (key == "production_volume")
-                                                russianKey = "Объем выработки";
+                                                russianKey = "Объем выработки (млн кВт*ч)";
                                             else if (key == "production_price")
-                                                russianKey = "Себестоимость выработки";
+                                                russianKey = "Себестоимость выработки (млн рублей)";
                                             else if (key == "consumption_volume")
-                                                russianKey = "Объем потребления";
+                                                russianKey = "Объем потребления (млн кВт*ч)";
                                             else if (key == "production_consumption_difference")
-                                                russianKey = "Разница выработки и потребления";
+                                                russianKey = "Разница выработки и потребления (млн кВт*ч)";
                                             indicators.push({ key: key, value: russianKey });
                                         }
                                     }
