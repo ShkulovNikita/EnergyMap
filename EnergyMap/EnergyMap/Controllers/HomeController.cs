@@ -44,10 +44,7 @@ namespace EnergyMap.Controllers
             FilesHandler.AddRegions(regionRuNames, databasePath);
 
             //парсинг Excel-файла с данными
-            Parser.ParseProductionVolume(xlsPath, databasePath);
-            Parser.ParseProductionPrice(xlsPath, databasePath);
-            Parser.ParseConsumptionVolume(xlsPath, databasePath);
-            Parser.ParseProdConsDifference(xlsPath, databasePath);
+            Parser.ParseData(xlsPath, databasePath);
 
             //внести показатели в файл GeoJSON
             FilesHandler.EditMapJSON(databasePath, ruMapPath);
@@ -58,7 +55,7 @@ namespace EnergyMap.Controllers
 
         public ActionResult Index()
         {
-            //GetData();
+            GetData();
             return View();
         }
     }

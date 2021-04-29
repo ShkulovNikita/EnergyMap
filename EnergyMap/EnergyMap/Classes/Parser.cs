@@ -9,6 +9,16 @@ namespace EnergyMap.Classes
 {
     static public class Parser
     {
+        //!
+        //парсить все данные
+        static public void ParseData(string xlsPath, string databasePath)
+        {
+            ParseProductionVolume(xlsPath, databasePath);
+            ParseProductionPrice(xlsPath, databasePath);
+            ParseConsumptionVolume(xlsPath, databasePath);
+            ParseProdConsDifference(xlsPath, databasePath);
+        }
+
         //получить данные по объему выработки
         static private Dictionary<string, double> GetProdVolume(XSSFWorkbook book)
         {
@@ -125,7 +135,7 @@ namespace EnergyMap.Classes
         }
 
         //парсинг данных по объему выработки регионов
-        static public void ParseProductionVolume(string dataPath, string databasePath)
+        static private void ParseProductionVolume(string dataPath, string databasePath)
         {
             //открыть Excel файл на чтение
             XSSFWorkbook book = OpenExcelBook(dataPath);
@@ -144,7 +154,7 @@ namespace EnergyMap.Classes
         }
 
         //парсинг данных по себестоимости выработки регионов
-        static public void ParseProductionPrice(string dataPath, string databasePath)
+        static private void ParseProductionPrice(string dataPath, string databasePath)
         {
             //открыть Excel файл на чтение
             XSSFWorkbook book = OpenExcelBook(dataPath);
@@ -163,7 +173,7 @@ namespace EnergyMap.Classes
         }
 
         //парсинг данных по объему потребления регионов
-        static public void ParseConsumptionVolume(string dataPath, string databasePath)
+        static private void ParseConsumptionVolume(string dataPath, string databasePath)
         {
             //открыть Excel файл на чтение
             XSSFWorkbook book = OpenExcelBook(dataPath);
@@ -182,7 +192,7 @@ namespace EnergyMap.Classes
         }
 
         //получение данных по разнице выработки и потребления
-        static public void ParseProdConsDifference(string dataPath, string databasePath)
+        static private void ParseProdConsDifference(string dataPath, string databasePath)
         {
             //получить список регионов с их данными
             List<RegionData> regionData = GetRegionData(databasePath);

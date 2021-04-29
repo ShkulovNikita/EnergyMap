@@ -245,6 +245,38 @@ namespace EnergyMap.Classes
             }
         }
 
+        //получение строки значения показателя
+        static private string GetIndicatorString(string currentLine, string indicator, double indValue)
+        {
+            string result = "";
+            
+            //если текущий показатель не был записан ранее
+            if(!currentLine.Contains(indicator))
+            {
+                //есть известное значение показателя
+                if (indValue != -1)
+                    result = " \"" + indicator + "\": " + Math.Round(indValue, 2).ToString().Replace(',', '.') + ",";
+                else
+                    result = " \"" + indicator + "\": " + "null" + ",";
+            }
+
+            return result;
+        }
+
+        //!
+        //получить значения показателей для одного региона
+        static private List<string> GetRegionIndicators(string currentLine, RegionData data)
+        {
+            List<string> result = new List<string>();
+
+            result.Add(GetIndicatorString(currentLine, "production_volume", data.ProdVolume));
+            result.Add(GetIndicatorString(currentLine, "production_price", data.ProdPrice));
+            result.Add(GetIndicatorString(currentLine, "consumption_volume", data.ConsVolume));
+            result.Add(GetIndicatorString(currentLine, "production_consumption_difference", data.ProdConsDif));
+
+            return result;
+        }
+
         //!
         //редактировать GeoJSON
         static public void EditMapJSON(string databasePath, string mapPath)
@@ -274,43 +306,14 @@ namespace EnergyMap.Classes
                         if (location - ("\"ID_0\": 186,").Length > 0)
                         {
                             //значения показателей
-                            string prodVolume = "";
-                            string prodPrice = "";
-                            string consVolume = "";
-                            string difference = "";
+                            List<string> indValues = GetRegionIndicators(text[i], data[counter]);
 
-                            //если этот показатель не был записан ранее
-                            if (!text[i].Contains("production_volume"))
-                            {
-                                if (data[counter].ProdVolume != -1)
-                                    prodVolume = " \"production_volume\": " + Math.Round(data[counter].ProdVolume, 2).ToString().Replace(',', '.') + ",";
-                                else
-                                    prodVolume = " \"production_volume\": " + "null" + ",";
-                            }
+                            //записать все полученные значения показателей
+                            string insertString = "";
+                            for (int j = 0; j < indValues.Count; j++)
+                                insertString = insertString + indValues[j];
 
-                            if (!text[i].Contains("production_price"))
-                            {
-                                if (data[counter].ProdPrice != -1)
-                                    prodPrice = " \"production_price\": " + Math.Round(data[counter].ProdPrice, 2).ToString().Replace(',', '.') + ",";
-                                else
-                                    prodPrice = " \"production_price\": " + "null" + ",";
-                            }
-
-                            if (!text[i].Contains("consumption_volume"))
-                            {
-                                if (data[counter].ConsVolume != -1)
-                                    consVolume = " \"consumption_volume\": " + Math.Round(data[counter].ConsVolume, 2).ToString().Replace(',', '.') + ",";
-                                else
-                                    consVolume = " \"consumption_volume\": " + "null" + ",";
-                            }
-
-                            if (!text[i].Contains("production_consumption_difference"))
-                                if (data[counter].ProdConsDif != -1)
-                                    difference = " \"production_consumption_difference\": " + Math.Round(data[counter].ProdConsDif, 2).ToString().Replace(',', '.') + ",";
-                                else
-                                    difference = " \"production_consumption_difference\": " + "null" + ",";
-
-                            text[i] = text[i].Insert(location, prodVolume + prodPrice + consVolume + difference);
+                            text[i] = text[i].Insert(location, insertString);
 
                             counter++;
                             newText = newText + text[i] + "\n";
