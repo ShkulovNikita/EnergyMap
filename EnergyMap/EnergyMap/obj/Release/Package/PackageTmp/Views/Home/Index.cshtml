@@ -1,121 +1,196 @@
 ﻿@{ ViewBag.Title = "Интерактивная энергетическая карта"; }
 
 <div class="row">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
-                crossorigin="anonymous"></script>
-        <h1>Прототип карты</h1>
-        <br />
-                <div class="col-md-8">
-                    <div id="mapid"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+            crossorigin="anonymous"></script>
+    <h1>Прототип карты</h1>
+    <br />
+
+    <!--Раздел работы со слоями-->
+    <div class="col-sm-12 col-md-12 col-lg-2">
+        <div class="modal" tabindex="-1" role="dialog" id="exampleModalLong">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Новый слой</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p><label for="layerName">Название слоя</label><input id="layerName" type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-large btn-success" onclick="addLayer()">Сохранить слой</a>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <aside>
-                        <!--Выпадающий список показателей-->
-                        <div class="row">
-                            <label>Показатель</label>
-                            <div class="col-md-12">
-                                <select class="form-select form-select-sm"
-                                        aria-label="Регионы"
-                                        id="indicators"></select>
-                            </div>
-                        </div>
-                        <br />
-                        <!--Область таблиц-->
-                        <div class="row">
-                            <div class="col-12">
-                                <br />
-                                <!--Таблица лидеров-->
-                                <label style="color: rgb(54, 207, 40); font-weight: bold">Топ лидеров</label>
-                                <table class="table" id="topRegions">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">№</th>
-                                            <th scope="col">Регион</th>
-                                            <th scope="col">Значение</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="top-row">
-                                            <th>n</th>
-                                            <th>-----</th>
-                                            <th>-----</th>
-                                        </tr>
-                                        <tr class="top-row">
-                                            <th>n</th>
-                                            <th>-----</th>
-                                            <th>-----</th>
-                                        </tr>
-                                        <tr class="top-row">
-                                            <th>n</th>
-                                            <th>-----</th>
-                                            <th>-----</th>
-                                        </tr>
-                                        <tr class="top-row">
-                                            <th>n</th>
-                                            <th>-----</th>
-                                            <th>-----</th>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <label style="color: rgb(37, 192, 219); font-weight: bold">Близкие показатели</label>
-                                <table class="table" id="closeRegions">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Регион</th>
-                                            <th scope="col">Значение</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="close-row">
-                                            <th>-----</th>
-                                            <th>-----</th>
-                                        </tr>
-                                        <tr class="close-row">
-                                            <th>-----</th>
-                                            <th>-----</th>
-                                        </tr>
-                                        <tr class="close-row">
-                                            <th>-----</th>
-                                            <th>-----</th>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div>
-                                    <input type="button" value="Выгрузить данные" class="btn btn-danger pull-left" onclick="location.href='@Url.Action("GetFile", "Home")'" />
-                                </div>
-                                <script>
-                                    //массив регионов
-                                    var regions = [];
-                                    //массив показателей
-                                    var indicators = [];
-                                    indicators.push({ key: "choose_indicators", value: "Выберите показатель" });
-                                    //получить список показателей
-                                    for ([key, value] of Object.entries(
-                                        bounds.features[0].properties
-                                    )) {
-                                        if ((key == "production_volume") || (key == "production_price") || (key == "consumption_volume") || (key == "production_consumption_difference")) {
-                                            var russianKey;
-                                            if (key == "production_volume")
-                                                russianKey = "Объем выработки";
-                                            else if (key == "production_price")
-                                                russianKey = "Себестоимость выработки";
-                                            else if (key == "consumption_volume")
-                                                russianKey = "Объем потребления";
-                                            else if (key == "production_consumption_difference")
-                                                russianKey = "Разница выработки и потребления";
-                                            indicators.push({ key: key, value: russianKey });
-                                        }
-                                    }
-                                    //Добавляем значения в список показателей
-                                    indicators.forEach(function (item, i, arr) {
-                                        $("#indicators").append(`<option value=${item.key}>${item.value}</option>`);
-                                    });
-                                </script>
-                            </div>
-                        </div>
-                    </aside>
+            </div>
+        </div>
+        <span>
+            Добавить слой
+            <button data-toggle="modal" data-target="#exampleModalLong">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                </svg>
+            </button>
+        </span>
+        <div>
+            <label>Специальные слои</label>
+            <div class="col-12">
+                <select class="form-select form-select-sm"
+                        aria-label="Регионы"
+                        id="layerst"></select>
+            </div>
+        </div>
+    </div>
+
+    <!--Карта-->
+    <div class="col-sm-12 col-md-12 col-lg-7">
+        <div id="mapid"></div>
+    </div>
+
+    <!--Блок выбора показателей и таблиц-->
+    <div class="col-sm-12 col-md-12 col-lg-3">
+        <aside>
+            <!--Выпадающий список показателей-->
+            <div class="row">
+                <label>Показатель</label>
+                <div class="col-md-12">
+                    <select class="form-select form-select-sm"
+                            aria-label="Регионы"
+                            id="indicators"></select>
                 </div>
+            </div>
+            <br />
+            <!--Область таблиц-->
+            <div class="row">
+                <div class="col-12">
+                    <br />
+                    <!--Таблица лидеров-->
+                    <label style="color: rgb(54, 207, 40); font-weight: bold">Топ лидеров</label>
+                    <table class="table" id="topRegions">
+                        <thead>
+                            <tr>
+                                <th scope="col">№</th>
+                                <th scope="col">Регион</th>
+                                <th scope="col">Значение</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="top-row">
+                                <th>n</th>
+                                <th>-----</th>
+                                <th>-----</th>
+                            </tr>
+                            <tr class="top-row">
+                                <th>n</th>
+                                <th>-----</th>
+                                <th>-----</th>
+                            </tr>
+                            <tr class="top-row">
+                                <th>n</th>
+                                <th>-----</th>
+                                <th>-----</th>
+                            </tr>
+                            <tr class="top-row">
+                                <th>n</th>
+                                <th>-----</th>
+                                <th>-----</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <label style="color: rgb(37, 192, 219); font-weight: bold">Близкие показатели</label>
+                    <table class="table" id="closeRegions">
+                        <thead>
+                            <tr>
+                                <th scope="col">Регион</th>
+                                <th scope="col">Значение</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="close-row">
+                                <th>-----</th>
+                                <th>-----</th>
+                            </tr>
+                            <tr class="close-row">
+                                <th>-----</th>
+                                <th>-----</th>
+                            </tr>
+                            <tr class="close-row">
+                                <th>-----</th>
+                                <th>-----</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div>
+                        <input type="button" value="Выгрузить данные" class="btn btn-danger pull-left" onclick="location.href='@Url.Action("GetFile", "Home")'" />
+                    </div>
+                    <script>
+                        //класс для специфичных слоев
+                        class Layer {
+                            constructor(name) {
+                                this.name = name
+                                this.polylines = []
+                                this.number = layers.length
+                                this.layer = L.layerGroup();
+                                this.last_index;
+                            }
+                            save(polyline, id) {
+                                var obj = {
+                                    "polyline": polyline,
+                                    "id": id
+                                };
+                                this.polylines.push(obj);
+                                this.layer.addLayer(polyline);
+                            }
+                        }
+                        //массив регионов
+                        var regions = [];
+                        //массив показателей
+                        var indicators = [];
+                        //слои
+                        var layers = [];
+
+                        $("#layerst").append(`<option value=None>Выберите слой</option>`);
+
+                        indicators.push({ key: "choose_indicators", value: "Выберите показатель" });
+                        //получить список показателей
+                        for ([key, value] of Object.entries(
+                            bounds.features[0].properties
+                        )) {
+                            if ((key == "production_volume") || (key == "production_price") || (key == "consumption_volume") || (key == "production_consumption_difference")) {
+                                var russianKey;
+                                if (key == "production_volume")
+                                    russianKey = "Объем выработки (млн кВт*ч)";
+                                else if (key == "production_price")
+                                    russianKey = "Себестоимость выработки (млн рублей)";
+                                else if (key == "consumption_volume")
+                                    russianKey = "Объем потребления (млн кВт*ч)";
+                                else if (key == "production_consumption_difference")
+                                    russianKey = "Разница выработки и потребления (млн кВт*ч)";
+                                indicators.push({ key: key, value: russianKey });
+                            }
+                        }
+                        //Добавляем значения в список показателей
+                        indicators.forEach(function (item, i, arr) {
+                            $("#indicators").append(`<option value=${item.key}>${item.value}</option>`);
+                        });
+                        //Добавление слоев
+                        function addLayer() {
+                            var layer = new Layer($("#layerName").val())
+                            layers.push(layer);
+                            $("#layerst").append(`<option value=${layer.number}>${layer.name}</option>`);
+                            //Object.assign(overlayMaps, { key: layer.layer });
+                        } 
+                    </script>
+                </div>
+            </div>
+        </aside>
+    </div>
+
     <script type="text/javascript" src="~/Scripts/logic.js"></script>
     <link rel="stylesheet" href="~/Content/mystyles.css" />
 </div>

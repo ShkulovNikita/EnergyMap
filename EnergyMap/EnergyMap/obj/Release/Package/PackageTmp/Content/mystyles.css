@@ -9,14 +9,19 @@ h1 {
 
 #mapid {
     height: 600px;
-    width: 890px;
+    width: 100%;
 }
 
 aside {
     background: #f0f0f0;
     padding: 10px;
-    float: right;
+    float: none;
     border-radius: 10px;
+    max-width: 100%;
+}
+
+table {
+    max-width: 100%;
 }
 
 .label {
@@ -36,7 +41,7 @@ aside {
     .info h4 {
         margin: 0 0 5px;
         color: #777;
-    }
+    }    
 
 .legend {
     line-height: 18px;

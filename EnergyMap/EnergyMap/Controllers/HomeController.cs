@@ -55,7 +55,7 @@ namespace EnergyMap.Controllers
 
         public ActionResult Index()
         {
-            GetData();
+            //GetData();
             return View();
         }
     }

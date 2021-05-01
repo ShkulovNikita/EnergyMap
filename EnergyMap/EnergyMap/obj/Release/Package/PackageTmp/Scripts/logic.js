@@ -1,5 +1,5 @@
 ﻿//отображение карты
-var mymap = L.map("mapid").setView([51.505, -0.09], 5);
+var mymap = L.map("mapid").setView([57.505, 45.09], 5);
 
 var geojson;
 
@@ -31,6 +31,7 @@ L.tileLayer(
         maxZoom: 18,
         id: "mapbox/streets-v11",
         tileSize: 512,
+        opacity: 0.5,
         zoomOffset: -1,
         accessToken:
             "sk.eyJ1Ijoid29ydGhsZXNza25pZ2h0IiwiYSI6ImNrbjF0ZXpjdzExM3Aydm8zcnVndXRjbzQifQ.612ET2bEsuRe9EqrxkryaA",
@@ -79,6 +80,7 @@ function highlightFeature(e) {
         color: "#666",
         dashArray: "",
         fillOpacity: 0.7,
+        opacity: 0.7,
     });
 
     //поддержка браузеров
@@ -173,13 +175,13 @@ info.addTo(mymap);
 function translateIndicator(indicator) {
     if (indicator == "Выберите показатель")
         return "default";
-    if (indicator == "Объем выработки")
+    if (indicator == "Объем выработки (млн кВт*ч)")
         return "production_volume";
-    if (indicator == "Себестоимость выработки")
+    if (indicator == "Себестоимость выработки (млн рублей)")
         return "production_price";
-    if (indicator == "Объем потребления")
+    if (indicator == "Объем потребления (млн кВт*ч)")
         return "consumption_volume";
-    if (indicator == "Разница выработки и потребления")
+    if (indicator == "Разница выработки и потребления (млн кВт*ч)")
         return "production_consumption_difference";
 }
 
@@ -322,6 +324,9 @@ legend.onAdd = function (map) {
         grades = [minValue, maxValue * 0.1, maxValue * 0.2, maxValue * 0.3, maxValue * 0.4, maxValue * 0.5, maxValue * 0.7, maxValue * 0.9, maxValue],
         labels = [];
     console.log("grades = " + grades);
+
+    grades = refineNumbers(grades);
+
     // loop through our density intervals and generate a label with a colored square for each interval
     for (var i = 0; i < grades.length; i++) {
         div.innerHTML +=
@@ -340,6 +345,16 @@ legend.onAdd = function (map) {
 
     return div;
 };
+
+//уменьшение размеров чисел легенды
+function refineNumbers(numbers) {
+    //округление
+    for (var i = 0; i < numbers.length; i++) {
+        numbers[i] = Math.floor(numbers[i] * 100) / 100;
+    }
+
+    return numbers;
+}
 
 
 /* Рейтинги регионов */
