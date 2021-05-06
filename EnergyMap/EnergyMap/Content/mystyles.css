@@ -9,14 +9,19 @@ h1 {
 
 #mapid {
     height: 600px;
-    width: 890px;
+    width: 100%;
 }
 
 aside {
     background: #f0f0f0;
     padding: 10px;
-    float: right;
+    float: none;
     border-radius: 10px;
+    max-width: 100%; 
+}
+
+table {
+    max-width: 100%;
 }
 
 .label {
@@ -50,3 +55,11 @@ aside {
         margin-right: 8px;
         opacity: 0.7;
     }
+
+.layersT {
+    padding: 5px;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+    margin: 10px;
+
+}

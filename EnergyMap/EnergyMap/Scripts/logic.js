@@ -111,7 +111,7 @@ function SetPoint(e) {
 
     
         if (polyline.length > 2) {
-            mymap._layers[Object.keys(mymap._layers)[Object.keys(mymap._layers).length - 1]];
+            mymap.removeLayer(mymap._layers[Object.keys(mymap._layers)[Object.keys(mymap._layers).length - 1]]);
         }
         var layer = L.polyline(polyline, { color: "red" });
         mymap.addLayer(layer);
@@ -119,9 +119,9 @@ function SetPoint(e) {
 }
 
 function FormPolyline() {
-    
-    layers[selectedLayerSTP].save(polyline); 
-    mymap._layers[Object.keys(mymap._layers)[Object.keys(mymap._layers).length - 1]];
+    var layer = L.polyline(polyline, { color: "red" });
+    layers[selectedLayerSTP].save(layer);  
+    mymap.removeLayer(mymap._layers[Object.keys(mymap._layers)[Object.keys(mymap._layers).length - 1]]);  
     polyline = []
     
 }
