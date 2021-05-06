@@ -3,6 +3,9 @@ var mymap = L.map("mapid").setView([51.505, -0.09], 5);
 
 var geojson;
 
+var polyline = [];
+
+
 //добавление границ
 L.tileLayer(
     "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",
@@ -95,9 +98,34 @@ function onEachFeature(feature, layer) {
     layer.on({
         mouseover: highlightFeature,
         mouseout: resetHighlight,
-        click: zoomToFeature,
+        //click: zoomToFeature,
+        click: SetPoint,
+        contextmenu: FormPolyline
     }); 
 }
+
+function SetPoint(e) {
+    var point = [e.latlng.lat, e.latlng.lng];
+    polyline.push(point);
+    if (polyline.length > 1) {
+
+    
+        if (polyline.length > 2) {
+            mymap._layers[Object.keys(mymap._layers)[Object.keys(mymap._layers).length - 1]];
+        }
+        var layer = L.polyline(polyline, { color: "red" });
+        mymap.addLayer(layer);
+    }
+}
+
+function FormPolyline() {
+    
+    layers[selectedLayerSTP].save(polyline); 
+    mymap._layers[Object.keys(mymap._layers)[Object.keys(mymap._layers).length - 1]];
+    polyline = []
+    
+}
+
 
 //переменная для поля с информацией о стране
 var info = L.control();
@@ -140,6 +168,9 @@ info.update = function (props) {
 
 //добавить поле к карте
 info.addTo(mymap);
+//добавить слои на карту
+var controlLayers = L.control.layers();
+controlLayers.addTo(mymap);
 
 //найти минимальное значение в массиве
 function arrayMin(arr) {
@@ -171,12 +202,17 @@ function arrayMax(arr) {
 //список показателей
 var selectIndicator = document.querySelector("#indicators");
 var text = $("#indicators option:selected").text();
+
+//список слоев
+var selectLayer = document.querySelector("#layerst");
 //максимальное значение показателя
 var maxValue = 0;
 //минимальное значение показателя
 var minValue = 0;
 //текущий показатель
 var currentIndicator = selectIndicator.value; 
+// текущий слой 
+var selectedLayerSTP = selectLayer.value;
 //легенда
 var legend = L.control({ position: 'bottomright' });
 
@@ -232,6 +268,12 @@ selectIndicator.addEventListener("change", (event) => {
 
     legend.addTo(mymap);
 });
+
+selectLayer.addEventListener("change", (event) => {
+    mymap.invalidateSize(true);
+    selectedLayerSTP = selectLayer.value;
+    
+})
 
 
 //обновление минимального и максимального значений по выбранному показателю
